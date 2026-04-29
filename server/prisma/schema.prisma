@@ -1,0 +1,122 @@
+// Prisma Schema for Aplikasi Absensi Siswa
+// Database: SQLite (MVP) → PostgreSQL (production)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  phone     String?
+  role      String   // ADMIN, GURU, SISWA, KEPALA_SEKOLAH, ORANG_TUA
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student          Student?
+  teacher          Teacher?
+  parent           Parent?
+  recordedAttendances Attendance[] @relation("RecordedBy")
+  qrSessions       QRSession[]
+}
+
+model Student {
+  id       String  @id @default(uuid())
+  nis      String  @unique
+  userId   String  @unique
+  classId  String?
+  parentId String?
+  photo    String?
+  address  String?
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  class       Class?       @relation(fields: [classId], references: [id])
+  parent      Parent?      @relation(fields: [parentId], references: [id])
+  attendances Attendance[]
+}
+
+model Teacher {
+  id              String  @id @default(uuid())
+  nip             String  @unique
+  userId          String  @unique
+  homeroomClassId String? @unique
+
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  homeroomClass Class? @relation("HomeroomTeacher", fields: [homeroomClassId], references: [id])
+}
+
+model Parent {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  children Student[]
+}
+
+model Class {
+  id           String  @id @default(uuid())
+  name         String
+  grade        String  // X, XI, XII
+  major        String? // IPA, IPS, Bahasa
+  academicYear String  // 2025/2026
+  isActive     Boolean @default(true)
+
+  students       Student[]
+  schedules      Schedule[]
+  attendances    Attendance[]
+  qrSessions     QRSession[]
+  homeroomTeacher Teacher? @relation("HomeroomTeacher")
+}
+
+model Schedule {
+  id           String  @id @default(uuid())
+  classId      String
+  dayOfWeek    Int     // 0=Minggu, 1=Senin, ..., 6=Sabtu
+  checkInTime  String  // "07:00"
+  checkOutTime String  // "14:00"
+  isActive     Boolean @default(true)
+
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+}
+
+model Attendance {
+  id           String   @id @default(uuid())
+  studentId    String
+  classId      String?
+  date         String   // "2026-04-28" (ISO date string for SQLite)
+  checkInTime  String?  // "07:05"
+  checkOutTime String?  // "14:00"
+  status       String   // HADIR, SAKIT, IZIN, ALPA, TERLAMBAT
+  method       String   // QR, MANUAL
+  notes        String?
+  recordedById String?
+  createdAt    DateTime @default(now())
+
+  student    Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class      Class?  @relation(fields: [classId], references: [id])
+  recordedBy User?   @relation("RecordedBy", fields: [recordedById], references: [id])
+
+  @@unique([studentId, date])
+}
+
+model QRSession {
+  id        String   @id @default(uuid())
+  classId   String
+  token     String   @unique
+  type      String   // CHECK_IN, CHECK_OUT
+  expiresAt DateTime
+  createdBy String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+  creator User  @relation(fields: [createdBy], references: [id])
+}
