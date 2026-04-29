@@ -86,7 +86,7 @@ const scanQR = async (req, res, next) => {
       return res.status(400).json({ error: 'QR Code ini bukan untuk kelas Anda.' });
     }
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
     const now = new Date();
     const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
@@ -246,7 +246,7 @@ const bulkAttendance = async (req, res, next) => {
 const getToday = async (req, res, next) => {
   try {
     const { classId } = req.query;
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
 
     const where = { date: today };
     if (classId) where.classId = classId;
