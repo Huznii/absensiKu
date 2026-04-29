@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { reportAPI, attendanceAPI } from '../services/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
@@ -60,7 +61,7 @@ export default function Dashboard() {
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
           <h3 style={{ marginBottom: 8 }}>📱 Scan QR Code untuk Absensi</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>Minta guru untuk menampilkan QR Code kelas</p>
-          <a href="/attendance/scan" className="btn btn--primary btn--lg">Buka Scanner</a>
+          <Link to="/attendance/scan" className="btn btn--primary btn--lg">Buka Scanner</Link>
         </div>
       </div>
     );
