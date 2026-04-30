@@ -88,7 +88,7 @@ const scanQR = async (req, res, next) => {
 
     const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
     const now = new Date();
-    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }).format(now);
 
     // Check schedule for lateness
     const dayOfWeek = now.getDay();
@@ -176,7 +176,7 @@ const manualAttendance = async (req, res, next) => {
     }
 
     const now = new Date();
-    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }).format(now);
 
     const attendance = await prisma.attendance.upsert({
       where: { studentId_date: { studentId, date } },
@@ -210,7 +210,7 @@ const bulkAttendance = async (req, res, next) => {
     }
 
     const now = new Date();
-    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }).format(now);
 
     const results = [];
     for (const att of attendances) {
