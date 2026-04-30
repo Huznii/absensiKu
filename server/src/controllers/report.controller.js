@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 const daily = async (req, res, next) => {
   try {
     const { date, classId } = req.query;
-    const targetDate = date || new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+    const targetDate = date || new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
     const where = { date: targetDate };
     // Filter by the student's current class, not the snapshot classId on the attendance record
     if (classId) where.student = { classId };
@@ -122,7 +122,7 @@ const studentReport = async (req, res, next) => {
 // GET /api/v1/reports/dashboard
 const dashboard = async (req, res, next) => {
   try {
-    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+    const today = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
     const userRole = req.user.role;
 
     // For GURU: scope to homeroom class only
@@ -163,7 +163,7 @@ const dashboard = async (req, res, next) => {
     const days = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date(); d.setDate(d.getDate() - i);
-      days.push(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(d));
+      days.push(new Date(d.getTime() + 7 * 3600000).toISOString().split('T')[0]);
     }
     const weekAttendances = await prisma.attendance.findMany({
       where: { date: { in: days }, ...classFilter }

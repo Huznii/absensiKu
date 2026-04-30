@@ -27,7 +27,7 @@ export default function ManualAttendancePage() {
   useEffect(() => {
     if (!selectedClass) return;
     setLoading(true);
-    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+    const today = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
     Promise.all([
       studentAPI.getAll({ classId: selectedClass, limit: 50 }),
       attendanceAPI.getToday({ classId: selectedClass })
@@ -59,7 +59,7 @@ export default function ManualAttendancePage() {
     setSaving(true);
     setMessage('');
     try {
-      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+      const today = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
       const attList = Object.entries(attendances).map(([studentId, status]) => ({ studentId, status }));
       await attendanceAPI.bulk({ classId: selectedClass, date: today, attendances: attList });
       setMessage(`✅ ${attList.length} absensi berhasil disimpan!`);

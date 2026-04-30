@@ -151,7 +151,7 @@ const update = async (req, res, next) => {
       // When class is changed, update classId on attendance records from today onwards
       // so that reports reflect the student's current class
       if (newClassId !== undefined && newClassId !== student.classId) {
-        const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+        const today = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
         await tx.attendance.updateMany({
           where: {
             studentId: req.params.id,

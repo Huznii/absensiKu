@@ -5,7 +5,7 @@ import '../../components/ui/components.css';
 export default function DailyReportPage() {
   const [data, setData] = useState(null);
   const [classes, setClasses] = useState([]);
-  const [date, setDate] = useState(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date()));
+  const [date, setDate] = useState(new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0]);
   const [classId, setClassId] = useState('');
   const [loading, setLoading] = useState(true);
 

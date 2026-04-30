@@ -86,9 +86,9 @@ const scanQR = async (req, res, next) => {
       return res.status(400).json({ error: 'QR Code ini bukan untuk kelas Anda.' });
     }
 
-    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+    const today = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
     const now = new Date();
-    const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }).format(now);
+    const currentTime = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[1].slice(0, 5);
 
     // Check schedule for lateness
     const dayOfWeek = now.getDay();
@@ -176,7 +176,7 @@ const manualAttendance = async (req, res, next) => {
     }
 
     const now = new Date();
-    const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }).format(now);
+    const currentTime = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[1].slice(0, 5);
 
     const attendance = await prisma.attendance.upsert({
       where: { studentId_date: { studentId, date } },
@@ -210,7 +210,7 @@ const bulkAttendance = async (req, res, next) => {
     }
 
     const now = new Date();
-    const currentTime = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }).format(now);
+    const currentTime = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[1].slice(0, 5);
 
     const results = [];
     for (const att of attendances) {
@@ -246,7 +246,7 @@ const bulkAttendance = async (req, res, next) => {
 const getToday = async (req, res, next) => {
   try {
     const { classId } = req.query;
-    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(new Date());
+    const today = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
 
     const where = { date: today };
     if (classId) where.classId = classId;
