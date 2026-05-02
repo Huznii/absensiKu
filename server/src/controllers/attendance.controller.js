@@ -13,7 +13,7 @@ const generateQR = async (req, res, next) => {
     }
 
     if (type === 'CHECK_IN') {
-      const dayOfWeek = new Date().getDay();
+      const dayOfWeek = new Date(Date.now() + 7 * 3600000).getUTCDay();
       const schedule = await prisma.schedule.findFirst({
         where: { classId, dayOfWeek, isActive: true }
       });
@@ -102,7 +102,7 @@ const scanQR = async (req, res, next) => {
     const currentTime = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[1].slice(0, 5);
 
     // Check schedule for lateness
-    const dayOfWeek = now.getDay();
+    const dayOfWeek = new Date(Date.now() + 7 * 3600000).getUTCDay();
     const schedule = await prisma.schedule.findFirst({
       where: { classId: session.classId, dayOfWeek, isActive: true }
     });
@@ -191,8 +191,7 @@ const manualAttendance = async (req, res, next) => {
       return res.status(404).json({ error: 'Siswa tidak ditemukan.' });
     }
 
-    const attendanceDate = new Date(date);
-    const dayOfWeek = attendanceDate.getDay();
+    const dayOfWeek = new Date(`${date}T00:00:00Z`).getUTCDay();
     const schedule = await prisma.schedule.findFirst({
       where: { classId: student.classId, dayOfWeek, isActive: true }
     });
@@ -240,8 +239,7 @@ const bulkAttendance = async (req, res, next) => {
       return res.status(400).json({ error: 'classId, date, dan attendances array harus diisi.' });
     }
 
-    const attendanceDate = new Date(date);
-    const dayOfWeek = attendanceDate.getDay();
+    const dayOfWeek = new Date(`${date}T00:00:00Z`).getUTCDay();
     const schedule = await prisma.schedule.findFirst({
       where: { classId, dayOfWeek, isActive: true }
     });
