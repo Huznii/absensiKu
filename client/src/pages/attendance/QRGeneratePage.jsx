@@ -13,17 +13,20 @@ export default function QRGeneratePage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [isExtra, setIsExtra] = useState(false);
   const [error, setError] = useState('');
   const timerRef = useRef(null);
   const fullscreenRef = useRef(null);
   const classRef = useRef(selectedClass);
   const typeRef = useRef(type);
   const autoRefreshRef = useRef(autoRefresh);
+  const isExtraRef = useRef(isExtra);
 
   // Keep refs in sync
   useEffect(() => { classRef.current = selectedClass; }, [selectedClass]);
   useEffect(() => { typeRef.current = type; }, [type]);
   useEffect(() => { autoRefreshRef.current = autoRefresh; }, [autoRefresh]);
+  useEffect(() => { isExtraRef.current = isExtra; }, [isExtra]);
 
   useEffect(() => {
     classAPI.getAll().then(r => {
@@ -38,10 +41,11 @@ export default function QRGeneratePage() {
   const generateQR = async (classIdOverride) => {
     const classId = classIdOverride || classRef.current;
     const currentType = typeRef.current;
+    const currentIsExtra = isExtraRef.current;
     if (!classId) return;
     setError('');
     try {
-      const { data } = await attendanceAPI.generateQR({ classId, type: currentType });
+      const { data } = await attendanceAPI.generateQR({ classId, type: currentType, isExtra: currentIsExtra });
       setQrData(data.session);
       setCountdown(30);
       setCopied(false);
@@ -118,6 +122,17 @@ export default function QRGeneratePage() {
               <option value="CHECK_OUT">🔴 Keluar</option>
             </select>
           </div>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+            <input 
+              type="checkbox" 
+              checked={isExtra} 
+              onChange={e => setIsExtra(e.target.checked)} 
+              style={{ width: 16, height: 16 }}
+            />
+            Ini adalah Sesi Tambahan (Kelas Pengganti / Ekstrakurikuler di luar jadwal reguler)
+          </label>
         </div>
         <button className="btn btn--primary btn--block btn--lg" onClick={() => generateQR(selectedClass)}>
           {qrData ? '🔄 Generate Ulang' : '▶️ Mulai Generate QR'}

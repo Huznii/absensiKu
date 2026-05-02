@@ -6,10 +6,21 @@ const prisma = new PrismaClient();
 // POST /api/v1/attendance/qr/generate
 const generateQR = async (req, res, next) => {
   try {
-    const { classId, type = 'CHECK_IN' } = req.body;
+    const { classId, type = 'CHECK_IN', isExtra = false } = req.body;
 
     if (!classId) {
       return res.status(400).json({ error: 'classId harus diisi.' });
+    }
+
+    if (type === 'CHECK_IN') {
+      const dayOfWeek = new Date().getDay();
+      const schedule = await prisma.schedule.findFirst({
+        where: { classId, dayOfWeek, isActive: true }
+      });
+
+      if (!schedule && !isExtra) {
+        return res.status(400).json({ error: 'Tidak ada jadwal reguler untuk kelas ini hari ini. Centang "Sesi Tambahan" jika ingin membuka absensi.' });
+      }
     }
 
     // Deactivate previous active sessions for this class and type
@@ -106,14 +117,18 @@ const scanQR = async (req, res, next) => {
       }
 
       let status = 'HADIR';
+      let notes = existing ? existing.notes : null;
+
       if (schedule && currentTime > schedule.checkInTime) {
         status = 'TERLAMBAT';
+      } else if (!schedule) {
+        notes = notes ? `${notes} (Sesi Tambahan)` : '(Sesi Tambahan)';
       }
 
       if (existing) {
         existing = await prisma.attendance.update({
           where: { id: existing.id },
-          data: { checkInTime: currentTime, status, method: 'QR' }
+          data: { checkInTime: currentTime, status, method: 'QR', notes }
         });
       } else {
         existing = await prisma.attendance.create({
@@ -123,7 +138,8 @@ const scanQR = async (req, res, next) => {
             date: today,
             checkInTime: currentTime,
             status,
-            method: 'QR'
+            method: 'QR',
+            notes
           }
         });
       }
@@ -159,7 +175,7 @@ const scanQR = async (req, res, next) => {
 // POST /api/v1/attendance/manual
 const manualAttendance = async (req, res, next) => {
   try {
-    const { studentId, date, status, notes } = req.body;
+    const { studentId, date, status, notes, isExtra = false } = req.body;
 
     if (!studentId || !date || !status) {
       return res.status(400).json({ error: 'studentId, date, dan status harus diisi.' });
@@ -175,12 +191,27 @@ const manualAttendance = async (req, res, next) => {
       return res.status(404).json({ error: 'Siswa tidak ditemukan.' });
     }
 
+    const attendanceDate = new Date(date);
+    const dayOfWeek = attendanceDate.getDay();
+    const schedule = await prisma.schedule.findFirst({
+      where: { classId: student.classId, dayOfWeek, isActive: true }
+    });
+
+    if (!schedule && !isExtra) {
+      return res.status(400).json({ error: 'Tidak ada jadwal reguler pada tanggal tersebut. Aktifkan mode Sesi Tambahan jika diperlukan.' });
+    }
+
+    let finalNotes = notes;
+    if (!schedule && isExtra) {
+        finalNotes = notes ? `${notes} (Sesi Tambahan)` : '(Sesi Tambahan)';
+    }
+
     const now = new Date();
     const currentTime = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[1].slice(0, 5);
 
     const attendance = await prisma.attendance.upsert({
       where: { studentId_date: { studentId, date } },
-      update: { status, notes, method: 'MANUAL', recordedById: req.user.id },
+      update: { status, notes: finalNotes, method: 'MANUAL', recordedById: req.user.id },
       create: {
         studentId,
         classId: student.classId,
@@ -188,7 +219,7 @@ const manualAttendance = async (req, res, next) => {
         checkInTime: status === 'HADIR' || status === 'TERLAMBAT' ? currentTime : null,
         status,
         method: 'MANUAL',
-        notes,
+        notes: finalNotes,
         recordedById: req.user.id
       }
     });
@@ -202,11 +233,21 @@ const manualAttendance = async (req, res, next) => {
 // POST /api/v1/attendance/bulk
 const bulkAttendance = async (req, res, next) => {
   try {
-    const { classId, date, attendances } = req.body;
+    const { classId, date, attendances, isExtra = false } = req.body;
     // attendances: [{ studentId, status, notes }]
 
     if (!classId || !date || !attendances || !Array.isArray(attendances)) {
       return res.status(400).json({ error: 'classId, date, dan attendances array harus diisi.' });
+    }
+
+    const attendanceDate = new Date(date);
+    const dayOfWeek = attendanceDate.getDay();
+    const schedule = await prisma.schedule.findFirst({
+      where: { classId, dayOfWeek, isActive: true }
+    });
+
+    if (!schedule && !isExtra) {
+      return res.status(400).json({ error: 'Tidak ada jadwal reguler pada tanggal tersebut. Aktifkan mode Sesi Tambahan jika diperlukan.' });
     }
 
     const now = new Date();
@@ -214,11 +255,16 @@ const bulkAttendance = async (req, res, next) => {
 
     const results = [];
     for (const att of attendances) {
+      let finalNotes = att.notes;
+      if (!schedule && isExtra) {
+        finalNotes = att.notes ? `${att.notes} (Sesi Tambahan)` : '(Sesi Tambahan)';
+      }
+
       const record = await prisma.attendance.upsert({
         where: { studentId_date: { studentId: att.studentId, date } },
         update: {
           status: att.status,
-          notes: att.notes || null,
+          notes: finalNotes || null,
           method: 'MANUAL',
           recordedById: req.user.id
         },
@@ -229,7 +275,7 @@ const bulkAttendance = async (req, res, next) => {
           checkInTime: att.status === 'HADIR' || att.status === 'TERLAMBAT' ? currentTime : null,
           status: att.status,
           method: 'MANUAL',
-          notes: att.notes || null,
+          notes: finalNotes || null,
           recordedById: req.user.id
         }
       });

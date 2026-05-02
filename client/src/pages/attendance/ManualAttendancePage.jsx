@@ -13,6 +13,7 @@ export default function ManualAttendancePage() {
   const [attendances, setAttendances] = useState({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [isExtra, setIsExtra] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function ManualAttendancePage() {
     try {
       const today = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
       const attList = Object.entries(attendances).map(([studentId, status]) => ({ studentId, status }));
-      await attendanceAPI.bulk({ classId: selectedClass, date: today, attendances: attList });
+      await attendanceAPI.bulk({ classId: selectedClass, date: today, attendances: attList, isExtra });
       setMessage(`✅ ${attList.length} absensi berhasil disimpan!`);
     } catch (e) {
       setMessage('❌ ' + (e.response?.data?.error || 'Gagal menyimpan'));
@@ -73,10 +74,16 @@ export default function ManualAttendancePage() {
     <div className="animate-fade-in">
       <div className="page-header"><h1>✏️ Absensi Manual</h1></div>
       <div className="card">
-        <div className="filters-bar">
-          <select className="form-input form-select" value={selectedClass} onChange={e => setSelectedClass(e.target.value)}>
-            {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
+        <div className="filters-bar" style={{ flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <select className="form-input form-select" value={selectedClass} onChange={e => setSelectedClass(e.target.value)}>
+              {classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              <input type="checkbox" checked={isExtra} onChange={e => setIsExtra(e.target.checked)} />
+              Sesi Tambahan
+            </label>
+          </div>
           <button className="btn btn--primary" onClick={handleSubmit} disabled={saving || students.length === 0}>
             {saving ? 'Menyimpan...' : '💾 Simpan Semua'}
           </button>
