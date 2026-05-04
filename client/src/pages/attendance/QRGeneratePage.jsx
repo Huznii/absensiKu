@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { attendanceAPI, classAPI } from '../../services/api';
 import '../../components/ui/components.css';
+import { MdQrCodeScanner, MdCheckCircle, MdCancel, MdRefresh, MdPlayArrow, MdAssignment } from 'react-icons/md';
 
 export default function QRGeneratePage() {
   const { user } = useAuth();
@@ -98,7 +99,7 @@ export default function QRGeneratePage() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1>📱 QR Absensi</h1>
+        <h1 className="flex items-center gap-2"><MdQrCodeScanner className="inline-block" /> QR Absensi</h1>
         {qrData && (
           <button className="btn btn--secondary" onClick={toggleFullscreen}>
             {isFullscreen ? '✕ Keluar Fullscreen' : '🖥️ Mode Proyektor'}
@@ -118,8 +119,8 @@ export default function QRGeneratePage() {
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Tipe Absensi</label>
             <select className="form-input form-select" value={type} onChange={e => setType(e.target.value)}>
-              <option value="CHECK_IN">🟢 Masuk</option>
-              <option value="CHECK_OUT">🔴 Keluar</option>
+              <option value="CHECK_IN"><MdCheckCircle className="text-green-500 inline" /> Masuk</option>
+              <option value="CHECK_OUT"><MdCancel className="text-red-500 inline" /> Keluar</option>
             </select>
           </div>
         </div>
@@ -134,12 +135,12 @@ export default function QRGeneratePage() {
             Ini adalah Sesi Tambahan (Kelas Pengganti / Ekstrakurikuler di luar jadwal reguler)
           </label>
         </div>
-        <button className="btn btn--primary btn--block btn--lg" onClick={() => generateQR(selectedClass)}>
-          {qrData ? '🔄 Generate Ulang' : '▶️ Mulai Generate QR'}
+        <button className="btn btn--primary btn--block btn--lg flex items-center justify-center gap-2" onClick={() => generateQR(selectedClass)}>
+          {qrData ? <><MdRefresh size={20} /> Generate Ulang</> : <><MdPlayArrow size={20} /> Mulai Generate QR</>}
         </button>
         {error && (
           <div style={{ marginTop: 12, padding: 10, background: 'var(--danger-light)', borderRadius: 'var(--radius-md)', color: '#991b1b', fontSize: '0.85rem', fontWeight: 500 }}>
-            ❌ {error}
+            <MdCancel className="inline-block" /> {error}
           </div>
         )}
       </div>
@@ -160,7 +161,7 @@ export default function QRGeneratePage() {
                 fontSize: isFullscreen ? '1.3rem' : '0.9rem',
                 marginBottom: 8
               }}>
-                {type === 'CHECK_IN' ? '🟢 ABSENSI MASUK' : '🔴 ABSENSI KELUAR'}
+                {type === 'CHECK_IN' ? <><MdCheckCircle className="text-green-500 inline" /> ABSENSI MASUK</> : <><MdCancel className="text-red-500 inline" /> ABSENSI KELUAR</>}
               </div>
               <h2 style={{ fontSize: isFullscreen ? '2.5rem' : '1.3rem', marginTop: 8 }}>
                 {className}
@@ -210,7 +211,7 @@ export default function QRGeneratePage() {
                 fontWeight: 700,
                 color: timerColor
               }}>
-                {countdown > 0 ? `⏱️ ${countdown} detik` : '🔄 Refreshing...'}
+                {countdown > 0 ? `⏱️ ${countdown} detik` : <><MdRefresh className="inline-block" /> Refreshing...</>}
               </p>
               <p style={{
                 fontSize: isFullscreen ? '1rem' : '0.8rem',
@@ -230,7 +231,7 @@ export default function QRGeneratePage() {
               fontSize: isFullscreen ? '1.1rem' : '0.85rem',
               color: 'var(--primary-dark)'
             }}>
-              📱 Siswa: Buka <strong>AbsensiKu</strong> → <strong>Scan QR</strong> → Arahkan kamera ke QR ini
+              <MdQrCodeScanner className="inline-block" /> Siswa: Buka <strong>AbsensiKu</strong> → <strong>Scan QR</strong> → Arahkan kamera ke QR ini
             </div>
 
             {/* Action buttons (hidden in fullscreen) */}
@@ -240,7 +241,7 @@ export default function QRGeneratePage() {
                   🖥️ Tampilkan Fullscreen (Proyektor)
                 </button>
                 <button className="btn btn--secondary btn--sm" onClick={copyToken}>
-                  {copied ? '✅ Token Disalin!' : '📋 Salin Token'}
+                  {copied ? <><MdCheckCircle className="inline-block" /> Token Disalin!</> : <><MdAssignment className="inline-block" /> Salin Token</>}
                 </button>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                   <input type="checkbox" checked={autoRefresh} onChange={e => setAutoRefresh(e.target.checked)} />
@@ -259,7 +260,7 @@ export default function QRGeneratePage() {
                 fontSize: '0.8rem',
                 color: '#065f46'
               }}>
-                ✅ Token telah disalin! Bagikan ke siswa yang tidak bisa scan kamera.
+                <MdCheckCircle className="inline-block" /> Token telah disalin! Bagikan ke siswa yang tidak bisa scan kamera.
                 <br />
                 <span style={{ color: '#047857', fontWeight: 600 }}>
                   ⚠️ Token hanya berlaku {countdown} detik lagi.

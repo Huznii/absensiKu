@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { attendanceAPI, classAPI, studentAPI } from '../../services/api';
 import '../../components/ui/components.css';
+import { MdCheckCircle, MdCancel, MdEditDocument, MdSave, MdGroup } from 'react-icons/md';
 
 const STATUSES = ['HADIR', 'TERLAMBAT', 'SAKIT', 'IZIN', 'ALPA'];
 
@@ -14,7 +15,7 @@ export default function ManualAttendancePage() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isExtra, setIsExtra] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     classAPI.getAll().then(r => {
@@ -58,21 +59,21 @@ export default function ManualAttendancePage() {
 
   const handleSubmit = async () => {
     setSaving(true);
-    setMessage('');
+    setMessage(null);
     try {
       const today = new Date(Date.now() + 7 * 3600000).toISOString().split('T')[0];
       const attList = Object.entries(attendances).map(([studentId, status]) => ({ studentId, status }));
       await attendanceAPI.bulk({ classId: selectedClass, date: today, attendances: attList, isExtra });
-      setMessage(`✅ ${attList.length} absensi berhasil disimpan!`);
+      setMessage({ type: 'success', text: `${attList.length} absensi berhasil disimpan!` });
     } catch (e) {
-      setMessage('❌ ' + (e.response?.data?.error || 'Gagal menyimpan'));
+      setMessage({ type: 'error', text: (e.response?.data?.error || 'Gagal menyimpan') });
     }
     setSaving(false);
   };
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header"><h1>✏️ Absensi Manual</h1></div>
+      <div className="page-header"><h1 className="flex items-center gap-2"><MdEditDocument className="inline-block" /> Absensi Manual</h1></div>
       <div className="card">
         <div className="filters-bar" style={{ flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -84,14 +85,18 @@ export default function ManualAttendancePage() {
               Sesi Tambahan
             </label>
           </div>
-          <button className="btn btn--primary" onClick={handleSubmit} disabled={saving || students.length === 0}>
-            {saving ? 'Menyimpan...' : '💾 Simpan Semua'}
+          <button className="btn btn--primary flex items-center gap-2" onClick={handleSubmit} disabled={saving || students.length === 0}>
+            {saving ? 'Menyimpan...' : <><MdSave size={18} /> Simpan Semua</>}
           </button>
         </div>
-        {message && <div style={{ padding: 12, marginBottom: 16, borderRadius: 'var(--radius-md)', background: message.startsWith('✅') ? 'var(--success-light)' : 'var(--danger-light)', color: message.startsWith('✅') ? '#065f46' : '#991b1b', fontWeight: 500 }}>{message}</div>}
+        {message && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 12, marginBottom: 16, borderRadius: 'var(--radius-md)', background: message.type === 'success' ? 'var(--success-light)' : 'var(--danger-light)', color: message.type === 'success' ? '#065f46' : '#991b1b', fontWeight: 500 }}>
+            {message.type === 'success' ? <MdCheckCircle size={20} /> : <MdCancel size={20} />} {message.text}
+          </div>
+        )}
 
         {loading ? <div className="spinner" /> : students.length === 0 ? (
-          <div className="empty-state"><div className="empty-state__icon">👥</div><div className="empty-state__text">Tidak ada siswa di kelas ini</div></div>
+          <div className="empty-state"><div className="empty-state__icon"><MdGroup className="inline-block" /></div><div className="empty-state__text">Tidak ada siswa di kelas ini</div></div>
         ) : (
           <div className="attendance-list">
             {students.map((s, i) => (

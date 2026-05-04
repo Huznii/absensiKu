@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { reportAPI, classAPI } from '../../services/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import '../../components/ui/components.css';
+import { MdInsertChartOutlined, MdInsertChart } from 'react-icons/md';
 
 export default function MonthlyReportPage() {
   const now = new Date();
@@ -26,7 +27,7 @@ export default function MonthlyReportPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header"><h1>📈 Laporan Bulanan</h1></div>
+      <div className="page-header"><h1 className="flex items-center gap-2"><MdInsertChartOutlined className="inline-block" /> Laporan Bulanan</h1></div>
       <div className="filters-bar">
         <select className="form-input form-select" value={month} onChange={e => setMonth(+e.target.value)}>
           {['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'].map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
@@ -40,7 +41,7 @@ export default function MonthlyReportPage() {
         <>
           {chartData.length > 0 && (
             <div className="card" style={{ marginBottom: 20 }}>
-              <h3 style={{ marginBottom: 16 }}>📊 Grafik Kehadiran Harian</h3>
+              <h3 className="flex items-center gap-2" style={{ marginBottom: 16 }}><MdInsertChart className="inline-block" /> Grafik Kehadiran Harian</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />

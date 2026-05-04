@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { attendanceAPI } from '../../services/api';
 import '../../components/ui/components.css';
+import { MdQrCodeScanner, MdPhotoCamera, MdVideocam, MdCheckCircle, MdCancel } from 'react-icons/md';
 
 export default function QRScanPage() {
   const [token, setToken] = useState('');
@@ -87,7 +88,7 @@ export default function QRScanPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header"><h1>📱 Scan QR Absensi</h1></div>
+      <div className="page-header"><h1 className="flex items-center gap-2"><MdQrCodeScanner className="inline-block" /> Scan QR Absensi</h1></div>
       <div className="card" style={{ maxWidth: 500, margin: '0 auto', textAlign: 'center' }}>
         
         {/* Scanner Container */}
@@ -103,12 +104,12 @@ export default function QRScanPage() {
 
           {!cameraActive && !result && (
             <div style={{ padding: '20px 0' }}>
-              <div style={{ fontSize: '4rem', marginBottom: 16 }}>📷</div>
+              <div style={{ fontSize: '4rem', marginBottom: 16 }}><MdPhotoCamera className="inline-block" /></div>
               <p style={{ color: 'var(--text-secondary)', marginBottom: 20 }}>
                 Masukkan kode QR yang diberikan guru Anda, atau scan menggunakan kamera.
               </p>
               <button className="btn btn--primary" onClick={startCamera}>
-                📹 Buka Kamera
+                <MdVideocam className="inline-block" /> Buka Kamera
               </button>
             </div>
           )}
@@ -130,14 +131,14 @@ export default function QRScanPage() {
               />
             </div>
             <button className="btn btn--secondary btn--block" onClick={handleManualSubmit} disabled={loading}>
-              {loading ? 'Memproses...' : '✅ Submit Manual'}
+              {loading ? 'Memproses...' : '<MdCheckCircle className="inline-block" /> Submit Manual'}
             </button>
           </div>
         )}
 
         {result && (
           <div style={{ marginTop: 20, padding: 16, background: 'var(--success-light)', borderRadius: 'var(--radius-md)', color: '#065f46' }}>
-            <div style={{ fontSize: '2rem', marginBottom: 8 }}>✅</div>
+            <div style={{ fontSize: '2rem', marginBottom: 8 }}><MdCheckCircle className="inline-block" /></div>
             <strong>{result.message}</strong>
             {result.attendance && <p style={{ fontSize: '0.85rem', marginTop: 4 }}>Status: {result.attendance.status} | Jam: {result.attendance.checkInTime || result.attendance.checkOutTime}</p>}
             <button className="btn btn--primary btn--sm" style={{ marginTop: 16 }} onClick={() => { setResult(null); setToken(''); }}>Kembali</button>
@@ -146,7 +147,7 @@ export default function QRScanPage() {
         
         {error && (
           <div style={{ marginTop: 20, padding: 16, background: 'var(--danger-light)', borderRadius: 'var(--radius-md)', color: '#991b1b' }}>
-            <div style={{ fontSize: '2rem', marginBottom: 8 }}>❌</div>
+            <div style={{ fontSize: '2rem', marginBottom: 8 }}><MdCancel className="inline-block" /></div>
             <strong>{error}</strong>
             <button className="btn btn--danger btn--sm" style={{ marginTop: 16 }} onClick={() => setError('')}>Tutup</button>
           </div>

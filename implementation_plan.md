@@ -467,3 +467,5 @@ cd client && npm run build
 | 7 | Parent Module | ~15 min |
 | 8 | UI Polish & Responsive | ~20 min |
 | **Total** | | **~3 jam** |
+
+

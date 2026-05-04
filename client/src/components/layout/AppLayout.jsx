@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import Sidebar from './Sidebar';
 import './Layout.css';
 
@@ -29,12 +30,12 @@ export default function AppLayout() {
         <header className="header">
           <div className="header__left">
             <button className="header__menu-btn" onClick={() => setSidebarOpen(true)}>☰</button>
-            <span className="header__title">AbsensiKu</span>
+            <span className="header__title" style={{ letterSpacing: '1px' }}>PRESENSIO</span>
           </div>
           <div className="header__right">
             <span className="header__date">{getDateStr()}</span>
             <button className="header__theme-btn" onClick={toggleTheme} title="Toggle tema">
-              {theme === 'light' ? '🌙' : '☀️'}
+              {theme === 'light' ? <MdDarkMode size={20} /> : <MdLightMode size={20} />}
             </button>
           </div>
         </header>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { teacherAPI, classAPI, authAPI } from '../../services/api';
 import '../../components/ui/components.css';
+import { MdPersonOutline, MdEditDocument, MdSave } from 'react-icons/md';
 
 export default function TeacherManagement() {
   const [teachers, setTeachers] = useState([]);
@@ -59,11 +60,11 @@ export default function TeacherManagement() {
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header"><h1>👨‍🏫 Data Guru</h1><button className="btn btn--primary" onClick={openAdd}>+ Tambah Guru</button></div>
+      <div className="page-header"><h1 className="flex items-center gap-2"><MdPersonOutline className="inline-block" /> Data Guru</h1><button className="btn btn--primary" onClick={openAdd}>+ Tambah Guru</button></div>
       <div className="filters-bar"><input className="form-input" placeholder="🔍 Cari nama atau NIP..." value={search} onChange={e => setSearch(e.target.value)} /></div>
       <div className="card" style={{ padding: 0 }}>
         {loading ? <div className="spinner" /> : teachers.length === 0 ? (
-          <div className="empty-state"><div className="empty-state__icon">👨‍🏫</div><div className="empty-state__text">Tidak ada data guru</div></div>
+          <div className="empty-state"><div className="empty-state__icon"><MdPersonOutline className="inline-block" /></div><div className="empty-state__text">Tidak ada data guru</div></div>
         ) : (
           <div className="table-container"><table className="table"><thead><tr><th>NIP</th><th>Nama</th><th>Wali Kelas</th><th>Email</th><th>Aksi</th></tr></thead><tbody>
             {teachers.map(t => (
@@ -74,7 +75,7 @@ export default function TeacherManagement() {
                 <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{t.user.email}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 4 }}>
-                    <button className="btn btn--secondary btn--sm" onClick={() => openEdit(t)} title="Edit">✏️</button>
+                    <button className="btn btn--secondary btn--sm" onClick={() => openEdit(t)} title="Edit"><MdEditDocument className="inline-block" /></button>
                     <button className="btn btn--sm" onClick={() => { setResetTarget(t); setNewPassword(''); setResetMsg(''); }} title="Reset Password" style={{ background: 'linear-gradient(135deg, var(--warning), #d97706)', color: '#fff' }}>🔑</button>
                     <button className="btn btn--danger btn--sm" onClick={() => setDeleteTarget(t)} title="Hapus">🗑️</button>
                   </div>
@@ -88,13 +89,13 @@ export default function TeacherManagement() {
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}><div className="modal" onClick={e => e.stopPropagation()}>
-          <div className="modal__header"><h3 className="modal__title">{editing ? '✏️ Edit Guru' : '+ Tambah Guru'}</h3><button className="modal__close" onClick={() => setShowModal(false)}>✕</button></div>
+          <div className="modal__header"><h3 className="modal__title">{editing ? '<MdEditDocument className="inline-block" /> Edit Guru' : '+ Tambah Guru'}</h3><button className="modal__close" onClick={() => setShowModal(false)}>✕</button></div>
           <div className="form-group"><label className="form-label">NIP</label><input className="form-input" value={form.nip} onChange={e => setForm({ ...form, nip: e.target.value })} /></div>
           <div className="form-group"><label className="form-label">Nama</label><input className="form-input" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
           <div className="form-group"><label className="form-label">Email</label><input className="form-input" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /></div>
           {!editing && <div className="form-group"><label className="form-label">Password</label><input className="form-input" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} /></div>}
           <div className="form-group"><label className="form-label">Wali Kelas</label><select className="form-input form-select" value={form.homeroomClassId} onChange={e => setForm({ ...form, homeroomClassId: e.target.value })}><option value="">Tidak ada</option>{classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-          <div className="modal__footer"><button className="btn btn--secondary" onClick={() => setShowModal(false)}>Batal</button><button className="btn btn--primary" onClick={handleSave}>💾 Simpan</button></div>
+          <div className="modal__footer"><button className="btn btn--secondary" onClick={() => setShowModal(false)}>Batal</button><button className="btn btn--primary" onClick={handleSave}><MdSave className="inline-block" /> Simpan</button></div>
         </div></div>
       )}
 

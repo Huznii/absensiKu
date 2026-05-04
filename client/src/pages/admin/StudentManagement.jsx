@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { studentAPI, classAPI, authAPI } from '../../services/api';
 import '../../components/ui/components.css';
+import { MdSchool, MdEditDocument, MdSave } from 'react-icons/md';
 
 export default function StudentManagement() {
   const [students, setStudents] = useState([]);
@@ -70,7 +71,7 @@ export default function StudentManagement() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1>🎓 Data Siswa</h1>
+        <h1 className="flex items-center gap-2"><MdSchool className="inline-block" /> Data Siswa</h1>
         <button className="btn btn--primary" onClick={openAdd}>+ Tambah Siswa</button>
       </div>
       <div className="filters-bar">
@@ -82,7 +83,7 @@ export default function StudentManagement() {
       </div>
       <div className="card" style={{ padding: 0 }}>
         {loading ? <div className="spinner" /> : students.length === 0 ? (
-          <div className="empty-state"><div className="empty-state__icon">🎓</div><div className="empty-state__text">Tidak ada data siswa</div></div>
+          <div className="empty-state"><div className="empty-state__icon"><MdSchool className="inline-block" /></div><div className="empty-state__text">Tidak ada data siswa</div></div>
         ) : (
           <div className="table-container">
             <table className="table">
@@ -96,7 +97,7 @@ export default function StudentManagement() {
                     <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{s.user.email}</td>
                     <td>
                       <div style={{ display: 'flex', gap: 4 }}>
-                        <button className="btn btn--secondary btn--sm" onClick={() => openEdit(s)} title="Edit">✏️</button>
+                        <button className="btn btn--secondary btn--sm" onClick={() => openEdit(s)} title="Edit"><MdEditDocument className="inline-block" /></button>
                         <button className="btn btn--sm" onClick={() => { setResetTarget(s); setNewPassword(''); setResetMsg(''); }} title="Reset Password" style={{ background: 'linear-gradient(135deg, var(--warning), #d97706)', color: '#fff' }}>🔑</button>
                         <button className="btn btn--danger btn--sm" onClick={() => setDeleteTarget(s)} title="Hapus">🗑️</button>
                       </div>
@@ -121,7 +122,7 @@ export default function StudentManagement() {
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal__header">
-              <h3 className="modal__title">{editing ? '✏️ Edit Siswa' : '+ Tambah Siswa'}</h3>
+              <h3 className="modal__title">{editing ? '<MdEditDocument className="inline-block" /> Edit Siswa' : '+ Tambah Siswa'}</h3>
               <button className="modal__close" onClick={() => setShowModal(false)}>✕</button>
             </div>
             <div className="form-group"><label className="form-label">NIS</label><input className="form-input" value={form.nis} onChange={e => setForm({ ...form, nis: e.target.value })} /></div>
@@ -132,7 +133,7 @@ export default function StudentManagement() {
             <div className="form-group"><label className="form-label">No. HP</label><input className="form-input" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /></div>
             <div className="modal__footer">
               <button className="btn btn--secondary" onClick={() => setShowModal(false)}>Batal</button>
-              <button className="btn btn--primary" onClick={handleSave}>💾 Simpan</button>
+              <button className="btn btn--primary" onClick={handleSave}><MdSave className="inline-block" /> Simpan</button>
             </div>
           </div>
         </div>

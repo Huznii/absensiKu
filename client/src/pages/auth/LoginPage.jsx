@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { MdLock } from 'react-icons/md';
 import '../../components/ui/components.css';
 
 export default function LoginPage() {
@@ -29,9 +30,9 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-logo">
-          <span className="login-logo__icon">📚</span>
-          <div className="login-logo__title">AbsensiKu</div>
-          <div className="login-logo__subtitle">Sistem Absensi Siswa Digital</div>
+          <img src="/logo.png" alt="Presensio" style={{ width: '65px', height: '80px', margin: '0 auto 16px', display: 'block', objectFit: 'contain' }} />
+          <div className="login-logo__title" style={{ fontSize: '1.6rem', letterSpacing: '3px', textTransform: 'uppercase' }}>PRESENSIO</div>
+          <div className="login-logo__subtitle">APLIKASI DIGITAL PRESENSI SISWA</div>
         </div>
         {error && <div className="login-error">{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -43,8 +44,8 @@ export default function LoginPage() {
             <label className="form-label">Password</label>
             <input className="form-input" type="password" placeholder="Masukkan password" value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
-          <button className="btn btn--primary btn--block btn--lg" type="submit" disabled={loading} style={{ marginTop: '8px' }}>
-            {loading ? 'Memproses...' : '🔐 Masuk'}
+          <button className="btn btn--primary btn--block btn--lg flex items-center justify-center gap-2" type="submit" disabled={loading} style={{ marginTop: '8px' }}>
+            {loading ? 'Memproses...' : <><MdLock size={20} /> Masuk</>}
           </button>
         </form>
         <div style={{ marginTop: '20px', padding: '14px', background: 'rgba(99,102,241,0.1)', borderRadius: 'var(--radius-md)', fontSize: '0.78rem', color: '#94a3b8' }}>

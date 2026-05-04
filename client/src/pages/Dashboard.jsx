@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { reportAPI, attendanceAPI } from '../services/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import '../components/ui/components.css';
+import { MdWavingHand, MdLocationOn, MdAccessTime, MdWatchLater, MdQrCodeScanner, MdFamilyRestroom, MdSchool, MdInsertChart, MdCheckCircle, MdAlarm, MdLocalHospital, MdAssignment, MdCancel, MdTrackChanges, MdInbox, MdEditDocument, MdPersonOutline, MdBusiness } from 'react-icons/md';
 
 const COLORS = ['#10b981', '#f59e0b', '#3b82f6', '#6366f1', '#ef4444'];
 const STATUS_COLOR = { HADIR: '#10b981', TERLAMBAT: '#f59e0b', SAKIT: '#3b82f6', IZIN: '#6366f1', ALPA: '#ef4444', BELUM: '#64748b' };
@@ -39,27 +40,27 @@ export default function Dashboard() {
     const myAtt = todayAtt[0];
     return (
       <div className="animate-fade-in">
-        <h1 style={{ marginBottom: 4 }}>{greet}, {user.name?.split(' ')[0]}! 👋</h1>
+        <h1 className="flex items-center gap-2" style={{ marginBottom: 4 }}>{greet}, {user.name?.split(' ')[0]}! <MdWavingHand className="text-yellow-500 inline" /></h1>
         <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>{user.roleData?.class?.name || 'Kelas belum diatur'}</p>
         <div className="stats-grid">
           <div className="card card--stat card--primary">
-            <div className="stat-icon">📍</div>
+            <div className="stat-icon"><MdLocationOn className="inline-block" /></div>
             <div className="stat-value">{myAtt ? myAtt.status : 'Belum'}</div>
             <div className="stat-label">Status Hari Ini</div>
           </div>
           <div className="card card--stat card--success">
-            <div className="stat-icon">🕐</div>
+            <div className="stat-icon"><MdAccessTime className="inline-block" /></div>
             <div className="stat-value">{myAtt?.checkInTime || '--:--'}</div>
             <div className="stat-label">Jam Masuk</div>
           </div>
           <div className="card card--stat card--info">
-            <div className="stat-icon">🕑</div>
+            <div className="stat-icon"><MdWatchLater className="inline-block" /></div>
             <div className="stat-value">{myAtt?.checkOutTime || '--:--'}</div>
             <div className="stat-label">Jam Keluar</div>
           </div>
         </div>
         <div className="card" style={{ textAlign: 'center', padding: 40 }}>
-          <h3 style={{ marginBottom: 8 }}>📱 Scan QR Code untuk Absensi</h3>
+          <h3 className="flex items-center gap-2" style={{ marginBottom: 8 }}><MdQrCodeScanner className="inline-block" /> Scan QR Code untuk Absensi</h3>
           <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>Minta guru untuk menampilkan QR Code kelas</p>
           <Link to="/attendance/scan" className="btn btn--primary btn--lg">Buka Scanner</Link>
         </div>
@@ -71,18 +72,18 @@ export default function Dashboard() {
   if (user.role === 'ORANG_TUA') {
     return (
       <div className="animate-fade-in">
-        <h1 style={{ marginBottom: 4 }}>{greet}, {user.name?.split(' ')[0]}! 👋</h1>
+        <h1 className="flex items-center gap-2" style={{ marginBottom: 4 }}>{greet}, {user.name?.split(' ')[0]}! <MdWavingHand className="text-yellow-500 inline" /></h1>
         <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>Monitoring kehadiran anak Anda</p>
         <div className="stats-grid">
           <div className="card card--stat card--primary">
-            <div className="stat-icon">👨‍👩‍👧‍👦</div>
+            <div className="stat-icon"><MdFamilyRestroom className="inline-block" /></div>
             <div className="stat-value">{user.roleData?.children?.length || 0}</div>
             <div className="stat-label">Jumlah Anak</div>
           </div>
         </div>
         {user.roleData?.children?.map(child => (
           <div className="card" key={child.id} style={{ marginBottom: 12 }}>
-            <h3>🎓 {child.user.name}</h3>
+            <h3 className="flex items-center gap-2"><MdSchool className="inline-block" /> {child.user.name}</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Kelas: {child.class?.name || '-'}</p>
           </div>
         ))}
@@ -91,7 +92,7 @@ export default function Dashboard() {
   }
 
   // No data guard
-  if (!dashData) return <div className="empty-state"><div className="empty-state__icon">📊</div><div className="empty-state__text">Tidak ada data</div></div>;
+  if (!dashData) return <div className="empty-state"><div className="empty-state__icon"><MdInsertChart className="inline-block" /></div><div className="empty-state__text">Tidak ada data</div></div>;
 
   const pieData = [
     { name: 'Hadir', value: dashData.today.hadir },
@@ -108,38 +109,38 @@ export default function Dashboard() {
 
   return (
     <div className="animate-fade-in">
-      <h1 style={{ marginBottom: 4 }}>{greet}, {user.name?.split(' ')[0]}! 👋</h1>
+      <h1 className="flex items-center gap-2" style={{ marginBottom: 4 }}>{greet}, {user.name?.split(' ')[0]}! <MdWavingHand className="text-yellow-500 inline" /></h1>
       <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>{scopeLabel}</p>
 
       {/* Stat Cards */}
       <div className="stats-grid">
         <div className="card card--stat card--primary">
-          <div className="stat-icon">🎓</div>
+          <div className="stat-icon"><MdSchool className="inline-block" /></div>
           <div className="stat-value">{dashData.totalStudents}</div>
           <div className="stat-label">{isGuru ? 'Siswa di Kelas' : 'Total Siswa'}</div>
         </div>
         <div className="card card--stat card--success">
-          <div className="stat-icon">✅</div>
+          <div className="stat-icon"><MdCheckCircle className="inline-block" /></div>
           <div className="stat-value">{dashData.today.hadir}</div>
           <div className="stat-label">Hadir Hari Ini</div>
         </div>
         <div className="card card--stat card--warning">
-          <div className="stat-icon">⏰</div>
+          <div className="stat-icon"><MdAlarm className="inline-block" /></div>
           <div className="stat-value">{dashData.today.terlambat}</div>
           <div className="stat-label">Terlambat</div>
         </div>
         <div className="card card--stat card--info">
-          <div className="stat-icon">💊</div>
+          <div className="stat-icon"><MdLocalHospital className="inline-block" /></div>
           <div className="stat-value">{dashData.today.sakit}</div>
           <div className="stat-label">Sakit</div>
         </div>
         <div className="card card--stat card--primary">
-          <div className="stat-icon">📋</div>
+          <div className="stat-icon"><MdAssignment className="inline-block" /></div>
           <div className="stat-value">{dashData.today.izin}</div>
           <div className="stat-label">Izin</div>
         </div>
         <div className="card card--stat card--danger">
-          <div className="stat-icon">❌</div>
+          <div className="stat-icon"><MdCancel className="inline-block" /></div>
           <div className="stat-value">{dashData.today.alpa}</div>
           <div className="stat-label">Alpa</div>
         </div>
@@ -148,7 +149,7 @@ export default function Dashboard() {
       {/* Charts */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 16, marginBottom: 24 }}>
         <div className="card">
-          <h3 style={{ marginBottom: 16 }}>📊 Trend Kehadiran 7 Hari</h3>
+          <h3 className="flex items-center gap-2" style={{ marginBottom: 16 }}><MdInsertChart className="inline-block" /> Trend Kehadiran 7 Hari</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={dashData.weeklyTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
@@ -164,7 +165,7 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </div>
         <div className="card">
-          <h3 style={{ marginBottom: 16 }}>🎯 Distribusi Hari Ini</h3>
+          <h3 className="flex items-center gap-2" style={{ marginBottom: 16 }}><MdTrackChanges className="inline-block" /> Distribusi Hari Ini</h3>
           {pieData.length > 0 ? (
             <ResponsiveContainer width="100%" height={260}>
               <PieChart>
@@ -175,7 +176,7 @@ export default function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div className="empty-state"><div className="empty-state__icon">📭</div><div className="empty-state__text">Belum ada data hari ini</div></div>
+            <div className="empty-state"><div className="empty-state__icon"><MdInbox className="inline-block" /></div><div className="empty-state__text">Belum ada data hari ini</div></div>
           )}
         </div>
       </div>
@@ -184,7 +185,7 @@ export default function Dashboard() {
       {isGuru && dashData.todayStudents && (
         <div className="card" style={{ padding: 0 }}>
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-light)' }}>
-            <h3>📋 Kehadiran {dashData.classInfo?.name} Hari Ini</h3>
+            <h3 className="flex items-center gap-2"><MdAssignment className="inline-block" /> Kehadiran {dashData.classInfo?.name} Hari Ini</h3>
           </div>
           <div className="table-container" style={{ border: 'none' }}>
             <table className="table">
@@ -209,8 +210,8 @@ export default function Dashboard() {
             </table>
           </div>
           <div style={{ padding: '12px 20px', borderTop: '1px solid var(--border-light)', display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="/attendance/qr" className="btn btn--primary btn--sm">📱 Buka QR Absensi</a>
-            <a href="/attendance/manual" className="btn btn--secondary btn--sm">✏️ Input Manual</a>
+            <a href="/attendance/qr" className="btn btn--primary btn--sm"><MdQrCodeScanner className="inline-block" /> Buka QR Absensi</a>
+            <a href="/attendance/manual" className="btn btn--secondary btn--sm"><MdEditDocument className="inline-block" /> Input Manual</a>
           </div>
         </div>
       )}
@@ -218,8 +219,8 @@ export default function Dashboard() {
       {/* Admin/Kepsek: Extra stats */}
       {!isGuru && (
         <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
-          <div className="card card--stat card--info"><div className="stat-icon">👨‍🏫</div><div className="stat-value">{dashData.totalTeachers}</div><div className="stat-label">Total Guru</div></div>
-          <div className="card card--stat card--primary"><div className="stat-icon">🏫</div><div className="stat-value">{dashData.totalClasses}</div><div className="stat-label">Total Kelas</div></div>
+          <div className="card card--stat card--info"><div className="stat-icon"><MdPersonOutline className="inline-block" /></div><div className="stat-value">{dashData.totalTeachers}</div><div className="stat-label">Total Guru</div></div>
+          <div className="card card--stat card--primary"><div className="stat-icon"><MdBusiness className="inline-block" /></div><div className="stat-value">{dashData.totalClasses}</div><div className="stat-label">Total Kelas</div></div>
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { scheduleAPI, classAPI } from '../../services/api';
 import '../../components/ui/components.css';
+import { MdCalendarMonth, MdSave } from 'react-icons/md';
 
 const DAYS = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 
@@ -34,7 +35,7 @@ export default function ScheduleManagement() {
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header"><h1>📅 Jadwal</h1><button className="btn btn--primary" onClick={() => { setForm({ classId: classes[0]?.id || '', dayOfWeek: '1', checkInTime: '07:00', checkOutTime: '14:00' }); setShowModal(true); }}>+ Tambah Jadwal</button></div>
+      <div className="page-header"><h1 className="flex items-center gap-2"><MdCalendarMonth className="inline-block" /> Jadwal</h1><button className="btn btn--primary" onClick={() => { setForm({ classId: classes[0]?.id || '', dayOfWeek: '1', checkInTime: '07:00', checkOutTime: '14:00' }); setShowModal(true); }}>+ Tambah Jadwal</button></div>
       <div className="filters-bar"><select className="form-input form-select" value={filterClass} onChange={e => setFilterClass(e.target.value)}><option value="">Semua Kelas</option>{classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
       <div className="card" style={{ padding: 0 }}>
         {loading ? <div className="spinner" /> : (
@@ -53,7 +54,7 @@ export default function ScheduleManagement() {
           <div className="form-group"><label className="form-label">Hari</label><select className="form-input form-select" value={form.dayOfWeek} onChange={e => setForm({ ...form, dayOfWeek: e.target.value })}>{DAYS.map((d, i) => <option key={i} value={i}>{d}</option>)}</select></div>
           <div className="form-group"><label className="form-label">Jam Masuk</label><input className="form-input" type="time" value={form.checkInTime} onChange={e => setForm({ ...form, checkInTime: e.target.value })} /></div>
           <div className="form-group"><label className="form-label">Jam Keluar</label><input className="form-input" type="time" value={form.checkOutTime} onChange={e => setForm({ ...form, checkOutTime: e.target.value })} /></div>
-          <div className="modal__footer"><button className="btn btn--secondary" onClick={() => setShowModal(false)}>Batal</button><button className="btn btn--primary" onClick={handleSave}>💾 Simpan</button></div>
+          <div className="modal__footer"><button className="btn btn--secondary" onClick={() => setShowModal(false)}>Batal</button><button className="btn btn--primary" onClick={handleSave}><MdSave className="inline-block" /> Simpan</button></div>
         </div></div>
       )}
 

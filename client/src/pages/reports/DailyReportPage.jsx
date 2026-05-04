@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { reportAPI, classAPI } from '../../services/api';
 import '../../components/ui/components.css';
+import { MdAssignment, MdInbox } from 'react-icons/md';
 
 export default function DailyReportPage() {
   const [data, setData] = useState(null);
@@ -21,7 +22,7 @@ export default function DailyReportPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header"><h1>📋 Laporan Harian</h1></div>
+      <div className="page-header"><h1 className="flex items-center gap-2"><MdAssignment className="inline-block" /> Laporan Harian</h1></div>
       <div className="filters-bar">
         <input className="form-input" type="date" value={date} onChange={e => setDate(e.target.value)} />
         <select className="form-input form-select" value={classId} onChange={e => setClassId(e.target.value)}><option value="">Semua Kelas</option>{classes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
@@ -37,7 +38,7 @@ export default function DailyReportPage() {
           </div>
           <div className="card" style={{ padding: 0 }}>
             {data.attendances.length === 0 ? (
-              <div className="empty-state"><div className="empty-state__icon">📭</div><div className="empty-state__text">Tidak ada data absensi</div></div>
+              <div className="empty-state"><div className="empty-state__icon"><MdInbox className="inline-block" /></div><div className="empty-state__text">Tidak ada data absensi</div></div>
             ) : (
               <div className="table-container"><table className="table"><thead><tr><th>Nama</th><th>Kelas</th><th>Masuk</th><th>Keluar</th><th>Status</th><th>Metode</th></tr></thead><tbody>
                 {data.attendances.map(a => (
